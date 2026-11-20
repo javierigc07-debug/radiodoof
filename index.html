@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1a0b2e">
+  <meta name="description" content="RadioDoof: la emisora de Doof con tu música.">
+  <title>DJ Doof · RadioDoof</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="iconos/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="iconos/apple-touch.png">
+  <link rel="stylesheet" href="radiodoof.css?v=a43839df9e">
+</head>
+<body>
+  <div class="luces" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <header class="barra">
+    <h1 class="marca"><img src="iconos/favicon.png" alt="" width="28" height="28"> DJ <span>DOOF</span></h1>
+    <span id="al-aire" class="al-aire" hidden><b></b> AL AIRE</span>
+  </header>
+
+  <main id="principal">
+    <section id="entrar" class="entrar" hidden>
+      <img src="iconos/icono-192.png" alt="" width="120" height="120">
+      <h2>RadioDoof</h2>
+      <p>Pega el token de DoofApp para entrar. Si ya entraste a DoofApp en este teléfono, no hace falta.</p>
+      <form id="entrar-form">
+        <input id="entrar-token" type="password" autocomplete="off" placeholder="Token" required>
+        <button type="submit" class="boton primario">Entrar</button>
+      </form>
+      <p id="entrar-error" class="error" hidden></p>
+    </section>
+
+    <section id="radio" class="radio" hidden>
+      <div class="plato-zona">
+        <div id="plato" class="plato">
+          <div class="surcos"></div>
+          <img class="etiqueta" src="iconos/icono-192.png" alt="">
+          <div class="eje"></div>
+        </div>
+        <div class="brazo" aria-hidden="true"></div>
+      </div>
+
+      <div class="cancion">
+        <div id="voz" class="voz" hidden>🎙 Doof al micrófono · después suena</div>
+        <h2 id="titulo">Conectando con la cabina…</h2>
+        <p id="artista"></p>
+        <div class="progreso" id="progreso" hidden><span class="pista"><i id="progreso-barra"></i></span><span id="progreso-texto"></span></div>
+        <p id="sigue" class="sigue"></p>
+      </div>
+
+      <div class="controles">
+        <button id="b-vivo" class="redondo" type="button" aria-label="Volver a conectar al vivo" title="Volver al vivo">
+          <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></svg></button>
+        <button id="b-play" class="redondo grande" type="button" aria-label="Escuchar"></button>
+        <button id="b-saltar" class="redondo" type="button" aria-label="Saltar canción" title="Saltar">
+          <svg viewBox="0 0 24 24"><path d="M5 5l9 7-9 7zM17 5v14"/></svg></button>
+      </div>
+
+      <div class="ajustes">
+        <label class="interruptor"><input id="ahorro" type="checkbox"><span></span> Ahorro de datos</label>
+        <small id="saldo" class="saldo"></small>
+      </div>
+      <p id="estado-red" class="estado-red" hidden></p>
+    </section>
+  </main>
+
+  <footer id="cabina" class="cabina" hidden>
+    <div id="cabina-respuesta" class="cabina-respuesta" hidden></div>
+    <div class="atajos">
+      <button type="button" data-cabina="top de ">Top de…</button>
+      <button type="button" data-cabina="pon ">Pon…</button>
+      <button type="button" data-cabina="cambia el género">Otro género</button>
+      <button type="button" data-cabina="programa de regreso">De regreso</button>
+    </div>
+    <form id="cabina-form" class="cabina-form">
+      <input id="cabina-texto" type="text" maxlength="300" autocomplete="off" placeholder="Pídele algo a Doof…" aria-label="Pedido para Doof">
+      <button type="submit" aria-label="Mandar"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2-6z"/></svg></button>
+    </form>
+  </footer>
+
+  <script src="radiodoof.js?v=a43839df9e"></script>
+</body>
+</html>

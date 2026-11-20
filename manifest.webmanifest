@@ -1,0 +1,17 @@
+{
+  "name": "DJ Doof · RadioDoof",
+  "short_name": "DJ Doof",
+  "description": "RadioDoof: la emisora de Doof con tu música.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a0b2e",
+  "theme_color": "#1a0b2e",
+  "icons": [
+    { "src": "iconos/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "iconos/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "iconos/icono-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

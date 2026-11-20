@@ -1,0 +1,120 @@
+/* DJ Doof: la cabina de RadioDoof. Morado de noche y neón verde/rosa, como el ícono. */
+:root {
+  --fondo: #1a0b2e;
+  --fondo-2: #2a1048;
+  --tinta: #f4ecff;
+  --tenue: #b9a6d6;
+  --verde: #5cff9d;
+  --rosa: #ff4fd8;
+  --cian: #4fe3ff;
+  --rojo: #ff4d6a;
+  --borde: rgba(255, 255, 255, .12);
+  --sombra-neon: 0 0 18px rgba(255, 79, 216, .45), 0 0 42px rgba(92, 255, 157, .18);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--tinta);
+  background: radial-gradient(120% 80% at 50% 0%, var(--fondo-2), var(--fondo) 60%) fixed;
+  min-height: 100dvh;
+  display: flex; flex-direction: column;
+  padding-bottom: calc(150px + env(safe-area-inset-bottom));
+  overflow-x: hidden;
+}
+button, input { font: inherit; color: inherit; }
+svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* luces de pista: tres haces que se mueven despacio */
+.luces { position: fixed; inset: 0; pointer-events: none; z-index: -1; overflow: hidden; }
+.luces i { position: absolute; top: -20%; width: 40vmax; height: 140%; opacity: .16; filter: blur(30px); transform-origin: top center; animation: barrer 14s ease-in-out infinite alternate; }
+.luces i:nth-child(1) { left: -10%; background: linear-gradient(var(--rosa), transparent 70%); }
+.luces i:nth-child(2) { left: 35%; background: linear-gradient(var(--verde), transparent 70%); animation-delay: -5s; }
+.luces i:nth-child(3) { right: -15%; background: linear-gradient(var(--cian), transparent 70%); animation-delay: -9s; }
+@keyframes barrer { from { transform: rotate(-14deg); } to { transform: rotate(14deg); } }
+
+.barra { display: flex; align-items: center; justify-content: space-between; padding: calc(14px + env(safe-area-inset-top)) 18px 6px; }
+.marca { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 900; letter-spacing: .06em; }
+.marca img { border-radius: 8px; }
+.marca span { background: linear-gradient(90deg, var(--verde), var(--cian)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.al-aire { font-size: 12px; font-weight: 800; letter-spacing: .1em; color: var(--rojo); display: flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid rgba(255, 77, 106, .5); border-radius: 99px; }
+.al-aire b { width: 8px; height: 8px; border-radius: 50%; background: var(--rojo); box-shadow: 0 0 10px var(--rojo); animation: latido 1.4s infinite; }
+@keyframes latido { 50% { opacity: .35; } }
+
+main { flex: 1; width: 100%; max-width: 480px; margin: 0 auto; padding: 0 20px; }
+
+/* entrar */
+.entrar { text-align: center; padding-top: 6vh; }
+.entrar img { border-radius: 26px; box-shadow: var(--sombra-neon); }
+.entrar h2 { margin: 18px 0 6px; font-size: 28px; }
+.entrar p { color: var(--tenue); }
+.entrar form { display: flex; gap: 8px; margin-top: 18px; }
+.entrar input { flex: 1; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--borde); background: rgba(0, 0, 0, .3); }
+.error { color: var(--rojo); }
+
+/* el plato */
+.plato-zona { position: relative; width: min(74vw, 300px); aspect-ratio: 1; margin: 18px auto 10px; }
+.plato { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, #222 0 30%, #0d0d0f 31% 100%); box-shadow: 0 0 0 6px #120820, 0 0 0 7px var(--borde), var(--sombra-neon); }
+.surcos { position: absolute; inset: 6%; border-radius: 50%; background: repeating-radial-gradient(circle, rgba(255, 255, 255, .05) 0 1px, transparent 1px 4px); }
+.surcos::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 30deg, transparent 0 20%, rgba(255, 255, 255, .12) 25%, transparent 30% 70%, rgba(255, 255, 255, .08) 75%, transparent 80%); }
+.etiqueta { position: absolute; inset: 31%; width: 38%; height: 38%; border-radius: 50%; object-fit: cover; border: 3px solid #120820; }
+.eje { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px; border-radius: 50%; background: #ddd; }
+.plato.gira { animation: girar 1.8s linear infinite; }
+@keyframes girar { to { transform: rotate(360deg); } }
+.brazo { position: absolute; right: -4%; top: -2%; width: 14%; height: 62%; transform-origin: 50% 8%; transform: rotate(-24deg); transition: transform .8s ease; }
+.brazo::before { content: ""; position: absolute; left: 50%; top: 0; width: 18px; height: 18px; margin-left: -9px; border-radius: 50%; background: #3b2a55; border: 2px solid var(--tenue); }
+.brazo::after { content: ""; position: absolute; left: 50%; top: 8%; width: 5px; height: 92%; margin-left: -2.5px; border-radius: 3px; background: linear-gradient(var(--tenue), #8d7aa9); }
+.radio.sonando .brazo { transform: rotate(4deg); }
+
+/* la canción */
+.cancion { text-align: center; min-height: 150px; }
+.voz { display: inline-block; font-size: 13px; font-weight: 700; color: var(--fondo); background: var(--verde); padding: 3px 10px; border-radius: 99px; margin-bottom: 8px; box-shadow: 0 0 14px rgba(92, 255, 157, .5); }
+.cancion h2 { margin: 4px 0 2px; font-size: clamp(22px, 6vw, 28px); line-height: 1.15; overflow-wrap: anywhere; }
+#artista { margin: 0; color: var(--tenue); font-size: 17px; }
+#artista em { font-style: normal; color: var(--cian); }
+.progreso { display: flex; align-items: center; gap: 10px; margin: 14px 4px 6px; font-size: 13px; color: var(--tenue); font-variant-numeric: tabular-nums; }
+.pista { flex: 1; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .1); overflow: hidden; }
+.pista i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--rosa), var(--verde)); border-radius: 3px; transition: width 1s linear; }
+.sigue { margin: 6px 0 0; font-size: 14px; color: var(--tenue); }
+.sigue b { color: var(--tinta); font-weight: 600; }
+
+/* controles */
+.controles { display: flex; align-items: center; justify-content: center; gap: 28px; margin: 18px 0 14px; }
+.redondo { width: 54px; height: 54px; border-radius: 50%; border: 1px solid var(--borde); background: rgba(255, 255, 255, .06); display: grid; place-items: center; cursor: pointer; transition: transform .12s, background .2s; }
+.redondo:active { transform: scale(.94); }
+.redondo:disabled { opacity: .4; }
+.redondo.grande { width: 82px; height: 82px; border: 0; background: linear-gradient(135deg, var(--rosa), #9b4dff); box-shadow: var(--sombra-neon); color: #fff; }
+.redondo.grande svg { width: 34px; height: 34px; fill: currentColor; stroke: none; }
+.redondo.grande.cargando { animation: latido 1s infinite; }
+
+.ajustes { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 4px; border-top: 1px solid var(--borde); }
+.interruptor { display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; }
+.interruptor input { position: absolute; opacity: 0; }
+.interruptor span { width: 42px; height: 24px; border-radius: 99px; background: rgba(255, 255, 255, .15); position: relative; transition: background .2s; }
+.interruptor span::after { content: ""; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform .2s; }
+.interruptor input:checked + span { background: var(--verde); }
+.interruptor input:checked + span::after { transform: translateX(18px); }
+.interruptor input:focus-visible + span { outline: 2px solid var(--cian); outline-offset: 2px; }
+.saldo { color: var(--tenue); font-size: 12px; text-align: right; }
+.saldo.bajo { color: var(--rojo); }
+.estado-red { text-align: center; font-size: 13px; color: #ffd36b; }
+
+/* la cabina, fija abajo */
+.cabina { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 12px calc(10px + env(safe-area-inset-bottom)); background: rgba(18, 8, 32, .92); backdrop-filter: blur(12px); border-top: 1px solid var(--borde); }
+.cabina > * { max-width: 480px; margin-left: auto; margin-right: auto; }
+.cabina-respuesta { font-size: 14px; padding: 8px 12px; margin-bottom: 8px; border-radius: 12px; background: rgba(92, 255, 157, .1); border: 1px solid rgba(92, 255, 157, .3); white-space: pre-line; }
+.cabina-respuesta.mal { background: rgba(255, 77, 106, .1); border-color: rgba(255, 77, 106, .35); }
+.atajos { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+.atajos button { flex: none; font-size: 13px; padding: 5px 12px; border-radius: 99px; border: 1px solid var(--borde); background: rgba(255, 255, 255, .05); cursor: pointer; }
+.cabina-form { display: flex; gap: 8px; }
+.cabina-form input { flex: 1; min-width: 0; padding: 12px 16px; border-radius: 99px; border: 1px solid var(--borde); background: rgba(0, 0, 0, .35); }
+.cabina-form input:focus { outline: none; border-color: var(--rosa); box-shadow: 0 0 0 3px rgba(255, 79, 216, .2); }
+.cabina-form button { width: 46px; height: 46px; flex: none; border-radius: 50%; border: 0; background: var(--verde); color: var(--fondo); display: grid; place-items: center; cursor: pointer; }
+.boton { padding: 12px 18px; border-radius: 12px; border: 0; cursor: pointer; }
+.boton.primario { background: linear-gradient(135deg, var(--rosa), #9b4dff); color: #fff; font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  .luces i, .plato.gira, .al-aire b, .redondo.grande.cargando { animation: none; }
+}
