@@ -234,15 +234,20 @@
   function sesionMedia(forzada) {
     if (!('mediaSession' in navigator) || !S.datos) return;
     const d = S.datos;
-    const c = forzada || { titulo: d.titulo, artista: d.artista };
-    try {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: c.titulo || 'RadioDoof',
-        artist: c.artista ? `${c.artista} · RadioDoof` : 'RadioDoof',
-        album: d.programa ? '🎙 ' + d.programa : 'DJ Doof',
-        artwork: [{ src: ICONO, sizes: '512x512', type: 'image/png' }],
-      });
-    } catch (e) { /* navegador sin MediaMetadata */ }
+    const c = forzada || { titulo: d.titulo, artista: d.artista, portada: d.portada };
+    const arte = c.portada ? S.base + c.portada : ICONO;
+    const clave = [c.titulo, c.artista, arte, d.programa].join('|');
+    if (clave !== S.claveMedia) {        // reescribirla cada 10 s con lo mismo hacía parpadear la pantalla de bloqueo
+      S.claveMedia = clave;
+      try {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: c.titulo || 'RadioDoof',
+          artist: c.artista ? `${c.artista} · RadioDoof` : 'RadioDoof',
+          album: d.programa ? '🎙 ' + d.programa : 'DJ Doof',
+          artwork: [{ src: arte, sizes: '512x512', type: arte === ICONO ? 'image/png' : 'image/jpeg' }],
+        });
+      } catch (e) { /* navegador sin MediaMetadata */ }
+    }
     programarCambio();
   }
 
@@ -255,7 +260,8 @@
     if (ms <= 0 || ms > 20 * 60 * 1000) return;
     S.relojCambio = setTimeout(() => {
       if (!S.quiereSonar) return;
-      if (S.datos && S.datos.siguiente) sesionMedia({ titulo: S.datos.siguiente.titulo, artista: S.datos.siguiente.artista });
+      const sig = S.datos && S.datos.siguiente;
+      if (sig) sesionMedia({ titulo: sig.titulo, artista: sig.artista, portada: sig.portada });
       cargar();
     }, ms);
   }
@@ -275,7 +281,6 @@
     b.innerHTML = S.quiereSonar ? I.pausa : I.play;
     b.setAttribute('aria-label', S.quiereSonar ? 'Pausar' : 'Escuchar');
     b.classList.toggle('cargando', S.quiereSonar && S.cargando);
-    $('plato').classList.toggle('gira', sonando);
     $('radio').classList.toggle('sonando', sonando);
     $('al-aire').hidden = !sonando;
   }
@@ -292,7 +297,25 @@
     const saldo = $('saldo');
     saldo.textContent = m ? `🎙 Voz: ${m.saldo.toFixed(2)} · ~${m.especiales} especiales` : '';
     saldo.classList.toggle('bajo', !!m && m.saldo < 0.15);
+    ponerPortada(d.portada);
+    if (d.siguiente && d.siguiente.portada) new Image().src = S.base + d.siguiente.portada;     // que la próxima ya esté bajada
     moverBarra();
+  }
+
+  // La portada del disco que suena (viene dentro del MP3, achicada en la PC). Se baja aparte y entra con un fundido: sin saltos.
+  function ponerPortada(ruta) {
+    const url = ruta ? S.base + ruta : ICONO;
+    if (S.portada === url) return;
+    S.portada = url;
+    const img = $('portada');
+    const nueva = new Image();
+    nueva.onload = () => {
+      if (S.portada !== url) return;
+      img.classList.add('cambiando');
+      setTimeout(() => { img.src = url; $('plato-etiqueta').src = url; img.classList.remove('cambiando'); }, 350);
+    };
+    nueva.onerror = () => { if (S.portada === url) { img.src = ICONO; $('plato-etiqueta').src = ICONO; } };
+    nueva.src = url;
   }
 
   function moverBarra() {
@@ -301,7 +324,7 @@
     if (!d || !d.fin_estimado || !d.duracion || d.bumper) { caja.hidden = true; return; }
     caja.hidden = false;
     const queda = d.fin_estimado - Date.now() / 1000;
-    $('progreso-barra').style.width = `${Math.min(100, Math.max(0, (1 - queda / d.duracion) * 100))}%`;
+    $('progreso-barra').style.transform = `scaleX(${Math.min(1, Math.max(0, 1 - queda / d.duracion))})`;
     $('progreso-texto').textContent = queda > 0 ? `${minSeg(d.duracion - queda)} / ${minSeg(d.duracion)}` : 'terminando…';
   }
   setInterval(() => { if (!document.hidden) moverBarra(); }, 1000);
