@@ -2,14 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
   <meta name="theme-color" content="#1a0b2e">
   <meta name="description" content="RadioDoof: la emisora de Doof con tu música.">
   <title>DJ Doof · RadioDoof</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="iconos/favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="iconos/apple-touch.png">
-  <link rel="stylesheet" href="radiodoof.css?v=976cf5c9d9">
+  <link rel="stylesheet" href="radiodoof.css?v=2340a848fd">
 </head>
 <body>
   <header class="barra">
@@ -30,17 +30,19 @@
     </section>
 
     <section id="radio" class="radio" hidden>
-      <div class="disco">
-        <div id="plato" class="plato" aria-hidden="true"><div class="surcos"></div><img id="plato-etiqueta" class="etiqueta" src="iconos/icono-192.png" alt=""></div>
-        <img id="portada" class="portada" src="iconos/icono-512.png" alt="Portada del disco" width="512" height="512" decoding="async">
+      <div class="disco-zona">
+        <div class="disco">
+          <div class="giro"><img id="portada" class="portada" src="iconos/icono-512.png" alt="Portada del disco" width="512" height="512" decoding="async"></div>
+          <div class="brillo" aria-hidden="true"></div>
+        </div>
       </div>
 
       <div class="cancion">
-        <div id="voz" class="voz" hidden>🎙 Doof al micrófono · después suena</div>
+        <div id="voz" class="voz oculto">🎙 Doof al micrófono · después suena</div>
         <h2 id="titulo">Conectando con la cabina…</h2>
-        <p id="artista"></p>
-        <div class="progreso" id="progreso" hidden><span class="pista"><i id="progreso-barra"></i></span><span id="progreso-texto"></span></div>
-        <p id="sigue" class="sigue"></p>
+        <p id="artista" class="una-linea"></p>
+        <div class="progreso oculto" id="progreso"><span class="pista"><i id="progreso-barra"></i></span><span id="progreso-texto"></span></div>
+        <p id="sigue" class="sigue una-linea"></p>
       </div>
 
       <div class="controles">
@@ -55,12 +57,12 @@
         <label class="interruptor"><input id="ahorro" type="checkbox"><span></span> Ahorro de datos</label>
         <small id="saldo" class="saldo"></small>
       </div>
-      <p id="estado-red" class="estado-red" hidden></p>
+      <p id="estado-red" class="estado-red una-linea"></p>
     </section>
   </main>
 
   <footer id="cabina" class="cabina" hidden>
-    <div id="cabina-respuesta" class="cabina-respuesta" hidden></div>
+    <div id="cabina-respuesta" class="cabina-respuesta" hidden role="status"><span id="cabina-texto-respuesta"></span><button id="cerrar-respuesta" class="cerrar-respuesta" type="button" aria-label="Cerrar">×</button></div>
     <div class="atajos">
       <button type="button" data-cabina="top de ">Top de…</button>
       <button type="button" data-cabina="pon ">Pon…</button>
@@ -73,6 +75,6 @@
     </form>
   </footer>
 
-  <script src="radiodoof.js?v=976cf5c9d9"></script>
+  <script src="radiodoof.js?v=2340a848fd"></script>
 </body>
 </html>

@@ -1,4 +1,13 @@
-/* DJ Doof: la cabina de RadioDoof. Morado de noche y neón verde/rosa, como el ícono. */
+/* DJ Doof: la cabina de RadioDoof. Morado de noche y neón verde/rosa, como el ícono.
+
+   20 nov 2026, lo que Javier vio en el teléfono:
+   · «se lagea demasiado»: fuera las luces con blur animado, el vidrio esmerilado y las sombras que se repintaban. Lo único que se
+     anima es transform (el giro del disco y la barra), que lo hace la GPU.
+   · «la barra para escribir se mueve de arriba abajo»: la página era más alta que la pantalla, hacía scroll, y al mostrarse u ocultarse
+     la barra de direcciones del navegador el pie fijo saltaba. Ahora es una pantalla de app: body del alto exacto de la ventana, sin
+     scroll, con la cabina como último bloque (no position: fixed). Y todo lo que aparece y desaparece (Doof al micrófono, la barra de
+     progreso, los avisos de red, la respuesta de Doof) tiene su espacio reservado o va encima: nada empuja a nada.
+   · «el disco gira con la portada»: la portada ES el disco. */
 :root {
   --fondo: #1a0b2e;
   --fondo-2: #2a1048;
@@ -9,78 +18,91 @@
   --cian: #4fe3ff;
   --rojo: #ff4d6a;
   --borde: rgba(255, 255, 255, .12);
-  --sombra-neon: 0 0 18px rgba(255, 79, 216, .45), 0 0 42px rgba(92, 255, 157, .18);
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html, body { margin: 0; min-height: 100%; }
+html { height: 100%; background: var(--fondo); }
 body {
+  margin: 0;
+  height: 100vh;            /* respaldo */
+  height: 100dvh;           /* el alto real visible: el pie no depende de la barra del navegador */
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  overscroll-behavior: none;
   font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   color: var(--tinta);
-  background: radial-gradient(120% 80% at 50% 0%, var(--fondo-2), var(--fondo) 60%);
-  min-height: 100dvh;
-  display: flex; flex-direction: column;
-  padding-bottom: calc(150px + env(safe-area-inset-bottom));
-  overflow-x: hidden;
+  background: radial-gradient(120% 70% at 50% 0%, var(--fondo-2), var(--fondo) 65%);
+  -webkit-tap-highlight-color: transparent;
 }
 button, input { font: inherit; color: inherit; }
 svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-.barra { display: flex; align-items: center; justify-content: space-between; padding: calc(14px + env(safe-area-inset-top)) 18px 6px; }
+.barra { flex: none; display: flex; align-items: center; justify-content: space-between; padding: calc(12px + env(safe-area-inset-top)) 18px 4px; }
 .marca { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 900; letter-spacing: .06em; }
 .marca img { border-radius: 8px; }
-.marca span { background: linear-gradient(90deg, var(--verde), var(--cian)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.marca span { color: var(--verde); }
 .al-aire { font-size: 12px; font-weight: 800; letter-spacing: .1em; color: var(--rojo); display: flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid rgba(255, 77, 106, .5); border-radius: 99px; }
-.al-aire b { width: 8px; height: 8px; border-radius: 50%; background: var(--rojo); box-shadow: 0 0 10px var(--rojo); animation: latido 1.4s infinite; }
+.al-aire b { width: 8px; height: 8px; border-radius: 50%; background: var(--rojo); animation: latido 1.4s infinite; }
 @keyframes latido { 50% { opacity: .35; } }
 
-main { flex: 1; width: 100%; max-width: 480px; margin: 0 auto; padding: 0 20px; }
+/* lo de en medio ocupa lo que sobra; si la pantalla es muy baja, se encoge el disco antes que nada */
+main { flex: 1; min-height: 0; width: 100%; max-width: 480px; margin: 0 auto; padding: 0 20px; display: flex; flex-direction: column; }
+.radio { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding-bottom: 6px; }
 
 /* entrar */
-.entrar { text-align: center; padding-top: 6vh; }
-.entrar img { border-radius: 26px; box-shadow: var(--sombra-neon); }
+.entrar { margin: auto 0; text-align: center; }
+.entrar img { border-radius: 26px; }
 .entrar h2 { margin: 18px 0 6px; font-size: 28px; }
 .entrar p { color: var(--tenue); }
 .entrar form { display: flex; gap: 8px; margin-top: 18px; }
-.entrar input { flex: 1; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--borde); background: rgba(0, 0, 0, .3); }
+.entrar input { flex: 1; min-width: 0; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--borde); background: rgba(0, 0, 0, .3); }
 .error { color: var(--rojo); }
 
-/* el disco: la portada al frente y el vinilo asomando detrás. Solo se anima transform (lo hace la GPU): nada de blur ni sombras que se
-   repinten, que era lo que trababa el teléfono (20 nov 2026). */
-.disco { position: relative; width: min(68vw, 280px); aspect-ratio: 1; margin: 20px auto 16px; transform: translateX(-9%); }
-.portada { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; border-radius: 10px; background: #0d0718;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, .55); transition: opacity .35s; }
+/* el disco: la portada impresa en el vinilo, girando mientras suena. Al pausar se queda donde estaba (no vuelve a cero). El brillo va
+   en una capa que NO gira, como el reflejo de una luz en un disco de verdad. */
+.disco-zona { flex: 1 1 0; min-height: 110px; display: flex; align-items: center; justify-content: center; padding-top: 6px; }
+.disco { position: relative; height: 100%; max-height: min(76vw, 320px); aspect-ratio: 1; border-radius: 50%;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .55); }
+.giro { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; background: #0c0c10; border: 5px solid #0c0c10;
+  animation: girar 6s linear infinite; animation-play-state: paused; will-change: transform; }
+.radio.sonando .giro { animation-play-state: running; }
+.portada { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; transition: opacity .35s; }
 .portada.cambiando { opacity: 0; }
-.plato { position: absolute; top: 4%; left: 22%; width: 92%; height: 92%; border-radius: 50%; background: #111116; border: 1px solid rgba(255, 255, 255, .12); will-change: transform;
-  transition: left .6s ease; }
-.radio.sonando .plato { left: 30%; animation: girar 2.4s linear infinite; }
-.surcos { position: absolute; inset: 4%; border-radius: 50%; background: repeating-radial-gradient(circle, #2b2b33 0 1.5px, #131318 1.5px 5px); }
-.etiqueta { position: absolute; inset: 34%; width: 32%; height: 32%; border-radius: 50%; object-fit: cover; }
+.giro::before { content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background: repeating-radial-gradient(circle, rgba(0, 0, 0, 0) 0 3px, rgba(0, 0, 0, .10) 3px 4px); }      /* surcos */
+.giro::after { content: ""; position: absolute; left: 50%; top: 50%; width: 9%; height: 9%; transform: translate(-50%, -50%); border-radius: 50%;
+  background: var(--fondo); box-shadow: 0 0 0 3px rgba(255, 255, 255, .25); }                                /* agujero */
+.brillo { position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .16) 0%, rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, 0) 62%, rgba(255, 255, 255, .08) 100%); }
 @keyframes girar { to { transform: rotate(360deg); } }
 
-/* la canción */
-.cancion { text-align: center; min-height: 150px; }
-.voz { display: inline-block; font-size: 13px; font-weight: 700; color: var(--fondo); background: var(--verde); padding: 3px 10px; border-radius: 99px; margin-bottom: 8px; box-shadow: 0 0 14px rgba(92, 255, 157, .5); }
-.cancion h2 { margin: 4px 0 2px; font-size: clamp(22px, 6vw, 28px); line-height: 1.15; overflow-wrap: anywhere; }
-#artista { margin: 0; color: var(--tenue); font-size: 17px; }
+/* la canción: alturas fijas, para que nada empuje a lo de abajo cuando cambia */
+.cancion { flex: none; text-align: center; }
+.voz { display: inline-block; height: 24px; font-size: 13px; font-weight: 700; line-height: 18px; color: var(--fondo); background: var(--verde); padding: 3px 10px; border-radius: 99px; margin-bottom: 6px; }
+.oculto { visibility: hidden; }
+.cancion h2 { margin: 0; font-size: clamp(20px, 5.6vw, 26px); line-height: 1.2; height: 2.4em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.cancion h2.una { height: auto; min-height: 1.2em; }
+.una-linea { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#artista { margin: 2px 0 0; color: var(--tenue); font-size: 16px; }
 #artista em { font-style: normal; color: var(--cian); }
-.progreso { display: flex; align-items: center; gap: 10px; margin: 14px 4px 6px; font-size: 13px; color: var(--tenue); font-variant-numeric: tabular-nums; }
+.progreso { display: flex; align-items: center; gap: 10px; height: 20px; margin: 12px 4px 4px; font-size: 13px; color: var(--tenue); font-variant-numeric: tabular-nums; }
+#progreso-texto { min-width: 78px; text-align: right; }
 .pista { flex: 1; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .1); overflow: hidden; }
-.pista i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, var(--rosa), var(--verde)); border-radius: 3px; transform-origin: left; transform: scaleX(0); will-change: transform; transition: transform 1s linear; }
-.sigue { margin: 6px 0 0; font-size: 14px; color: var(--tenue); }
+.pista i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, var(--rosa), var(--verde)); transform-origin: left; transform: scaleX(0); will-change: transform; transition: transform 1s linear; }
+.sigue { margin: 4px 0 0; font-size: 14px; color: var(--tenue); }
 .sigue b { color: var(--tinta); font-weight: 600; }
 
 /* controles */
-.controles { display: flex; align-items: center; justify-content: center; gap: 28px; margin: 18px 0 14px; }
-.redondo { width: 54px; height: 54px; border-radius: 50%; border: 1px solid var(--borde); background: rgba(255, 255, 255, .06); display: grid; place-items: center; cursor: pointer; transition: transform .12s, background .2s; }
+.controles { flex: none; display: flex; align-items: center; justify-content: center; gap: 28px; }
+.redondo { width: 54px; height: 54px; border-radius: 50%; border: 1px solid var(--borde); background: rgba(255, 255, 255, .06); display: grid; place-items: center; cursor: pointer; transition: transform .12s; }
 .redondo:active { transform: scale(.94); }
 .redondo:disabled { opacity: .4; }
-.redondo.grande { width: 82px; height: 82px; border: 0; background: linear-gradient(135deg, var(--rosa), #9b4dff); box-shadow: 0 6px 20px rgba(255, 79, 216, .35); color: #fff; }
-.redondo.grande svg { width: 34px; height: 34px; fill: currentColor; stroke: none; }
+.redondo.grande { width: 76px; height: 76px; border: 0; background: linear-gradient(135deg, var(--rosa), #9b4dff); color: #fff; }
+.redondo.grande svg { width: 32px; height: 32px; fill: currentColor; stroke: none; }
 .redondo.grande.cargando { animation: latido 1s infinite; }
 
-.ajustes { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 4px; border-top: 1px solid var(--borde); }
+.ajustes { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 4px 0; border-top: 1px solid var(--borde); }
 .interruptor { display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; }
 .interruptor input { position: absolute; opacity: 0; }
 .interruptor span { width: 42px; height: 24px; border-radius: 99px; background: rgba(255, 255, 255, .15); position: relative; transition: background .2s; }
@@ -90,22 +112,25 @@ main { flex: 1; width: 100%; max-width: 480px; margin: 0 auto; padding: 0 20px; 
 .interruptor input:focus-visible + span { outline: 2px solid var(--cian); outline-offset: 2px; }
 .saldo { color: var(--tenue); font-size: 12px; text-align: right; }
 .saldo.bajo { color: var(--rojo); }
-.estado-red { text-align: center; font-size: 13px; color: #ffd36b; }
+.estado-red { flex: none; height: 18px; margin: 4px 0 0; text-align: center; font-size: 13px; color: #ffd36b; }
 
-/* la cabina, fija abajo */
-.cabina { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 12px calc(10px + env(safe-area-inset-bottom)); background: #12081f; border-top: 1px solid var(--borde); }
+/* la cabina: el último bloque de la pantalla, quieta. La respuesta de Doof flota encima, no la empuja. */
+.cabina { flex: none; position: relative; padding: 8px 12px calc(10px + env(safe-area-inset-bottom)); background: #12081f; border-top: 1px solid var(--borde); }
 .cabina > * { max-width: 480px; margin-left: auto; margin-right: auto; }
-.cabina-respuesta { font-size: 14px; padding: 8px 12px; margin-bottom: 8px; border-radius: 12px; background: rgba(92, 255, 157, .1); border: 1px solid rgba(92, 255, 157, .3); white-space: pre-line; }
-.cabina-respuesta.mal { background: rgba(255, 77, 106, .1); border-color: rgba(255, 77, 106, .35); }
+.cabina-respuesta { position: absolute; left: 12px; right: 12px; bottom: calc(100% + 8px); max-height: 30dvh; overflow-y: auto; font-size: 14px; padding: 10px 34px 10px 12px;
+  border-radius: 12px; background: #173326; border: 1px solid rgba(92, 255, 157, .35); white-space: pre-line; box-shadow: 0 8px 24px rgba(0, 0, 0, .45); }
+.cabina-respuesta.mal { background: #3a1420; border-color: rgba(255, 77, 106, .45); }
+.cerrar-respuesta { position: absolute; top: 4px; right: 4px; width: 28px; height: 28px; border: 0; background: none; color: var(--tenue); cursor: pointer; font-size: 18px; line-height: 1; }
 .atajos { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+.atajos::-webkit-scrollbar { display: none; }
 .atajos button { flex: none; font-size: 13px; padding: 5px 12px; border-radius: 99px; border: 1px solid var(--borde); background: rgba(255, 255, 255, .05); cursor: pointer; }
 .cabina-form { display: flex; gap: 8px; }
-.cabina-form input { flex: 1; min-width: 0; padding: 12px 16px; border-radius: 99px; border: 1px solid var(--borde); background: rgba(0, 0, 0, .35); }
-.cabina-form input:focus { outline: none; border-color: var(--rosa); box-shadow: 0 0 0 3px rgba(255, 79, 216, .2); }
+.cabina-form input { flex: 1; min-width: 0; height: 46px; padding: 0 16px; border-radius: 99px; border: 1px solid var(--borde); background: rgba(0, 0, 0, .35); font-size: 16px; }
+.cabina-form input:focus { outline: none; border-color: var(--rosa); }
 .cabina-form button { width: 46px; height: 46px; flex: none; border-radius: 50%; border: 0; background: var(--verde); color: var(--fondo); display: grid; place-items: center; cursor: pointer; }
 .boton { padding: 12px 18px; border-radius: 12px; border: 0; cursor: pointer; }
 .boton.primario { background: linear-gradient(135deg, var(--rosa), #9b4dff); color: #fff; font-weight: 700; }
 
 @media (prefers-reduced-motion: reduce) {
-  .radio.sonando .plato, .al-aire b, .redondo.grande.cargando { animation: none; }
+  .giro, .al-aire b, .redondo.grande.cargando { animation: none; }
 }

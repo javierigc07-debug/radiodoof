@@ -137,9 +137,7 @@
   }
 
   function avisoRed(texto) {
-    const el = $('estado-red');
-    el.hidden = !texto;
-    el.textContent = texto;
+    $('estado-red').textContent = texto;      // la línea tiene su alto reservado: vacía o no, no mueve nada
   }
 
   // ---------------------------------------------------------------- escuchar
@@ -288,7 +286,7 @@
   function pintar() {
     const d = S.datos;
     if (!d) return;
-    $('voz').hidden = !d.bumper;
+    $('voz').classList.toggle('oculto', !d.bumper);
     $('titulo').textContent = d.titulo || 'RadioDoof';
     const extra = d.programa ? `🎙 ${esc(d.programa)}` : d.pedido ? `a pedido: ${esc(d.pedido)}` : d.familia ? esc(d.familia) : '';
     $('artista').innerHTML = esc(d.artista || '') + (extra ? ` · <em>${extra}</em>` : '');
@@ -312,17 +310,18 @@
     nueva.onload = () => {
       if (S.portada !== url) return;
       img.classList.add('cambiando');
-      setTimeout(() => { img.src = url; $('plato-etiqueta').src = url; img.classList.remove('cambiando'); }, 350);
+      setTimeout(() => { img.src = url; img.classList.remove('cambiando'); }, 350);
     };
-    nueva.onerror = () => { if (S.portada === url) { img.src = ICONO; $('plato-etiqueta').src = ICONO; } };
+    nueva.onerror = () => { if (S.portada === url) img.src = ICONO; };
     nueva.src = url;
   }
 
   function moverBarra() {
     const d = S.datos;
     const caja = $('progreso');
-    if (!d || !d.fin_estimado || !d.duracion || d.bumper) { caja.hidden = true; return; }
-    caja.hidden = false;
+    const sin = !d || !d.fin_estimado || !d.duracion || d.bumper;
+    caja.classList.toggle('oculto', sin);
+    if (sin) return;
     const queda = d.fin_estimado - Date.now() / 1000;
     $('progreso-barra').style.transform = `scaleX(${Math.min(1, Math.max(0, 1 - queda / d.duracion))})`;
     $('progreso-texto').textContent = queda > 0 ? `${minSeg(d.duracion - queda)} / ${minSeg(d.duracion)}` : 'terminando…';
@@ -330,12 +329,16 @@
   setInterval(() => { if (!document.hidden) moverBarra(); }, 1000);
 
   // ---------------------------------------------------------------- la cabina
-  function cabinaRespuesta(texto, mal) {
+  // Flota encima de la cabina (no la empuja). Una respuesta buena se va sola; un error se queda hasta cerrarlo.
+  function cabinaRespuesta(texto, mal, esperando) {
     const el = $('cabina-respuesta');
+    clearTimeout(S.relojRespuesta);
     el.hidden = !texto;
-    el.textContent = texto;
+    $('cabina-texto-respuesta').textContent = texto;
     el.classList.toggle('mal', !!mal);
+    if (texto && !mal && !esperando) S.relojRespuesta = setTimeout(() => { el.hidden = true; }, 12000);
   }
+  $('cerrar-respuesta').addEventListener('click', () => cabinaRespuesta(''));
 
   $('cabina-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -343,7 +346,7 @@
     const texto = campo.value.trim();
     if (!texto) { campo.focus(); return; }
     campo.disabled = true;
-    cabinaRespuesta('Doof está en eso…');
+    cabinaRespuesta('Doof está en eso…', false, true);
     try {
       const d = await api('/cabina', { method: 'POST', body: JSON.stringify({ texto }) }, 50000);
       cabinaRespuesta(d.texto || '', !d.ok);
