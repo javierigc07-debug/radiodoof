@@ -12,7 +12,7 @@
 
   const REPO = 'javierigc07-debug/radiodoof';
   const URL_DIRECCION = `https://api.github.com/repos/${REPO}/contents/tunel.json?ref=tunel`;
-  const PATRON_TUNEL = /^https:\/\/[a-z0-9-]+\.trycloudflare\.com$/;
+  const PATRON_TUNEL = /^https:\/\/([a-z0-9-]+\.trycloudflare\.com|35-229-76-8\.sslip\.io)$/;  // el servidor de Google Cloud desde el 21 nov 2026
   const ES_REMOTO = location.hostname.endsWith('.github.io');
   const REFRESCO_VISIBLE_MS = 10000;
   const REFRESCO_OCULTO_MS = 45000;

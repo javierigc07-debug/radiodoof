@@ -1,5 +1,5 @@
 /* Guarda solo la interfaz, para que abra al instante y sin red. El audio y /api nunca pasan por la caché. */
-const VERSION = '2340a848fd';
+const VERSION = '4258e6ee6a';
 const CACHE = 'djdoof-' + VERSION;
 const ARCHIVOS = ['./', 'index.html', 'radiodoof.css?v=' + VERSION, 'radiodoof.js?v=' + VERSION, 'manifest.webmanifest',
   'iconos/icono-192.png', 'iconos/icono-512.png', 'iconos/favicon.png'];
