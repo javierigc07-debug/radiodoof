@@ -13,7 +13,8 @@
   const REPO = 'javierigc07-debug/radiodoof';
   const URL_DIRECCION = `https://api.github.com/repos/${REPO}/contents/tunel.json?ref=tunel`;
   const PATRON_TUNEL = /^https:\/\/([a-z0-9-]+\.trycloudflare\.com|35-229-76-8\.sslip\.io)$/;  // el servidor de Google Cloud desde el 21 nov 2026
-  const ES_REMOTO = location.hostname.endsWith('.github.io');
+  const SERVIDOR = 'https://35-229-76-8.sslip.io';
+  const ES_REMOTO =location.hostname.endsWith('.github.io');
   const REFRESCO_VISIBLE_MS = 10000;
   const REFRESCO_OCULTO_MS = 45000;
   const ESPERA_MAX_REINTENTO_MS = 10000;
@@ -92,6 +93,8 @@
     const sobre = sobreDelEnlace();
     if (sobre) { try { S.base = await abrirSobre(sobre); guardar('radiodoof_base', S.base); } catch (e) { /* sigue con lo publicado */ } }
     if (S.base && await salud(S.base)) return true;
+    // La radio vive en el servidor de Google Cloud con dirección fija: se prueba directo, sin gastar lecturas de GitHub (60/hora).
+    if (S.base !== SERVIDOR && await salud(SERVIDOR)) { S.base = SERVIDOR; guardar('radiodoof_base', SERVIDOR); return true; }
     try {
       const url = await leerDireccion();
       if (await salud(url)) { S.base = url; guardar('radiodoof_base', url); return true; }
